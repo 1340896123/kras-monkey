@@ -1,0 +1,127 @@
+# Kras Docker Compose（部署拓扑骨架）
+#
+# 设计依据：.monkeycode/specs/kras/design.md §15
+# 说明：本文件为骨架，Dockerfile 与 .env 待 M0.3 实施时补齐。
+#
+# 启动顺序：
+#   1. sqlserver, elasticsearch 基础设施
+#   2. kras-dbinit 建库 + 种子（一次性）
+#   3. kras-api 启动后端
+#   4. kras-web 启动前端
+#
+# 使用：
+#   docker compose --env-file .env up -d
+#   curl http://localhost/health
+
+name: kras
+
+services:
+  sqlserver:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    container_name: kras-sqlserver
+    environment:
+      ACCEPT_EULA: "Y"
+      MSSQL_SA_PASSWORD: ${SQLSERVER_SA_PASSWORD:-Kras-Sql-2026!}
+      MSSQL_PID: Developer
+    ports:
+      - "1433:1433"
+    volumes:
+      - kras-sqlserver-data:/var/opt/mssql
+    healthcheck:
+      test: ["CMD-SHELL", "/opt/mssql-tools18/bin/sqlcmd -S localhost -U sa -P \"$$MSSQL_SA_PASSWORD\" -C -Q 'SELECT 1' || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - kras-net
+
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.13.4
+    container_name: kras-elasticsearch
+    environment:
+      discovery.type: single-node
+      xpack.security.enabled: "false"
+      ES_JAVA_OPTS: "-Xms512m -Xmx512m"
+    ports:
+      - "9200:9200"
+    volumes:
+      - kras-es-data:/usr/share/elasticsearch/data
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:9200/_cluster/health || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - kras-net
+
+  kras-dbinit:
+    build:
+      context: ..
+      dockerfile: infra/dockerfiles/Kras.DbInit.Dockerfile
+    container_name: kras-dbinit
+    environment:
+      ConnectionStrings__Kras: "Server=sqlserver,1433;Database=Kras;User Id=sa;Password=${SQLSERVER_SA_PASSWORD:-Kras-Sql-2026!};TrustServerCertificate=true;"
+    depends_on:
+      sqlserver:
+        condition: service_healthy
+    restart: "no"
+    networks:
+      - kras-net
+
+  kras-api:
+    build:
+      context: ..
+      dockerfile: infra/dockerfiles/Kras.Api.Dockerfile
+    container_name: kras-api
+    environment:
+      ASPNETCORE_URLS: "http://0.0.0.0:8080"
+      ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Kras: "Server=sqlserver,1433;Database=Kras;User Id=sa;Password=${SQLSERVER_SA_PASSWORD:-Kras-Sql-2026!};TrustServerCertificate=true;"
+      Elastic__Uri: "http://elasticsearch:9200"
+      Elastic__DefaultIndex: "kras-items"
+      Vault__RootPath: "/var/kras/vault"
+      Jwt__Secret: "${JWT_SECRET:-change-me-in-prod}"
+      Jwt__Issuer: "kras"
+      Jwt__Audience: "kras-web"
+      Cors__AllowedOrigins: "http://localhost,http://localhost:80"
+    ports:
+      - "8080:8080"
+    volumes:
+      - kras-vault:/var/kras/vault
+    depends_on:
+      kras-dbinit:
+        condition: service_completed_successfully
+      elasticsearch:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://localhost:8080/health || exit 1"]
+      interval: 15s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    networks:
+      - kras-net
+
+  kras-web:
+    build:
+      context: ../kras-web-vue
+      dockerfile: ../infra/dockerfiles/Kras.Web.Dockerfile
+    container_name: kras-web
+    ports:
+      - "80:80"
+    depends_on:
+      kras-api:
+        condition: service_healthy
+    networks:
+      - kras-net
+
+volumes:
+  kras-sqlserver-data:
+  kras-es-data:
+  kras-vault:
+
+networks:
+  kras-net:
+    driver: bridge

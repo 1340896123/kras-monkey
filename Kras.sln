@@ -1,0 +1,55 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backend", "backend", "{898A9923-22B0-4FBE-A149-6D74F4CDC2D1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kras.Core", "backend\Kras.Core\Kras.Core.csproj", "{D7A64713-459B-4080-8701-07643E26DE7F}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kras.Service", "backend\Kras.Service\Kras.Service.csproj", "{DDDE4473-F29D-4033-82C9-F3968DCE39F3}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kras.Api", "backend\Kras.Api\Kras.Api.csproj", "{1479C3A3-A818-40C9-9AFE-508D36820089}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kras.Api.Tests", "backend\Kras.Api.Tests\Kras.Api.Tests.csproj", "{283EAB85-B41D-436D-B230-94935C0275CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Kras.DbInit", "backend\Kras.DbInit\Kras.DbInit.csproj", "{A0E6737C-CB26-470C-A6C7-FEEDC9B803C5}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D7A64713-459B-4080-8701-07643E26DE7F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7A64713-459B-4080-8701-07643E26DE7F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7A64713-459B-4080-8701-07643E26DE7F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7A64713-459B-4080-8701-07643E26DE7F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DDDE4473-F29D-4033-82C9-F3968DCE39F3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DDDE4473-F29D-4033-82C9-F3968DCE39F3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DDDE4473-F29D-4033-82C9-F3968DCE39F3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DDDE4473-F29D-4033-82C9-F3968DCE39F3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1479C3A3-A818-40C9-9AFE-508D36820089}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1479C3A3-A818-40C9-9AFE-508D36820089}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1479C3A3-A818-40C9-9AFE-508D36820089}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1479C3A3-A818-40C9-9AFE-508D36820089}.Release|Any CPU.Build.0 = Release|Any CPU
+		{283EAB85-B41D-436D-B230-94935C0275CC}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{283EAB85-B41D-436D-B230-94935C0275CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{283EAB85-B41D-436D-B230-94935C0275CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{283EAB85-B41D-436D-B230-94935C0275CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A0E6737C-CB26-470C-A6C7-FEEDC9B803C5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A0E6737C-CB26-470C-A6C7-FEEDC9B803C5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A0E6737C-CB26-470C-A6C7-FEEDC9B803C5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A0E6737C-CB26-470C-A6C7-FEEDC9B803C5}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{D7A64713-459B-4080-8701-07643E26DE7F} = {898A9923-22B0-4FBE-A149-6D74F4CDC2D1}
+		{DDDE4473-F29D-4033-82C9-F3968DCE39F3} = {898A9923-22B0-4FBE-A149-6D74F4CDC2D1}
+		{1479C3A3-A818-40C9-9AFE-508D36820089} = {898A9923-22B0-4FBE-A149-6D74F4CDC2D1}
+		{283EAB85-B41D-436D-B230-94935C0275CC} = {898A9923-22B0-4FBE-A149-6D74F4CDC2D1}
+		{A0E6737C-CB26-470C-A6C7-FEEDC9B803C5} = {898A9923-22B0-4FBE-A149-6D74F4CDC2D1}
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,6 @@
+@Kras.Api_HostAddress = http://localhost:5240
+
+GET {{Kras.Api_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

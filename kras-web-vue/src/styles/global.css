@@ -1,0 +1,154 @@
+/* Kras 全局样式
+   设计依据：config/theme.ts 的 Design Token
+   不依赖 antd 的 reset.css 之外的全局样式表，保持组件层为主
+*/
+
+:root {
+  --kras-header-h: 56px;
+  --kras-sider-w: 232px;
+  --kras-sider-collapsed-w: 64px;
+  --kras-tabbar-h: 40px;
+  --kras-ease: cubic-bezier(0.4, 0, 0.2, 1);
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--kras-bg, #070c17);
+  color: var(--kras-text, #dde5f0);
+  font-family: 'Inter', 'HarmonyOS Sans SC', 'PingFang SC', 'Microsoft YaHei', -apple-system,
+    BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+  font-size: 14px;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: rgba(155, 168, 190, 0.18);
+  border-radius: 6px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(155, 168, 190, 0.32);
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* 品牌渐变文字 */
+.kras-brand-text {
+  background: linear-gradient(135deg, #3a8aff 0%, #36cfc9 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* 表单/详情区域通用容器：不使用 Card 包裹（需求 9.1） */
+.kras-surface {
+  background: #111b2e;
+  border: 1px solid #1f2d44;
+  border-radius: 12px;
+}
+
+.kras-page-padding {
+  padding: 16px 20px 20px;
+}
+
+/* 表头筛选行专用 */
+.kras-filter-row input,
+.kras-filter-row .ant-input-number,
+.kras-filter-row .ant-picker,
+.kras-filter-row .ant-select .ant-select-selector {
+  background: rgba(255, 255, 255, 0.03) !important;
+  border-color: #1f2d44 !important;
+}
+
+/* 详情页操作按钮区 */
+.kras-toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 12px 20px;
+  border-bottom: 1px solid #1f2d44;
+  background: linear-gradient(180deg, rgba(21, 34, 56, 0.5), rgba(17, 27, 46, 0));
+}
+
+/* 关系 Tab 内容 */
+.kras-relationship-tab {
+  padding: 12px 0;
+}
+
+/* 虚拟滚动行的 hover 反馈 */
+.kras-grid-row {
+  cursor: default;
+  transition: background 120ms var(--kras-ease);
+}
+.kras-grid-row:hover {
+  background: rgba(22, 104, 220, 0.08);
+}
+.kras-grid-row.is-active {
+  background: rgba(22, 104, 220, 0.18);
+}
+
+/* 工具类 */
+.kras-flex {
+  display: flex;
+}
+.kras-flex-1 {
+  flex: 1 1 0%;
+}
+.kras-text-mono {
+  font-family: 'JetBrains Mono', 'Fira Code', Menlo, Consolas, monospace;
+}
+.kras-text-secondary {
+  color: #9ba8be;
+}
+.kras-text-tertiary {
+  color: #6b7785;
+}
+
+/* 卡片悬浮微抬 */
+.kras-hoverable:hover {
+  border-color: #1668dc !important;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
+  transition: all 160ms var(--kras-ease);
+}
+
+/* loading 占位 */
+.kras-skeleton-block {
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0.04) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0.04) 100%
+  );
+  background-size: 200% 100%;
+  animation: kras-skeleton 1.4s ease infinite;
+  border-radius: 6px;
+}
+@keyframes kras-skeleton {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}

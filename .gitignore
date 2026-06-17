@@ -1,0 +1,57 @@
+# === Node / Vite 前端 ===
+kras-web-vue/node_modules/
+kras-web-vue/dist/
+kras-web-vue/dist-ssr/
+kras-web-vue/.vite/
+kras-web-vue/*.local
+kras-web-vue/.env.local
+kras-web-vue/.env.*.local
+
+# === .NET 后端 ===
+backend/**/bin/
+backend/**/obj/
+backend/**/*.user
+backend/**/*.suo
+backend/**/*.cache
+*.dll
+*.pdb
+*.exe
+*.pdb
+
+# === 测试与覆盖率 ===
+*.coverage
+*.coveragexml
+TestResults/
+[Bb]in/
+[Oo]bj/
+
+# === IDE ===
+.vs/
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# === 日志 ===
+*.log
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# === 环境与密钥 ===
+.env
+.env.*
+!.env.real-backend
+*.pem
+*.key
+secrets.json
+
+# === 构建产物 ===
+*.tgz
+*.tar.gz
+infra/.data/
