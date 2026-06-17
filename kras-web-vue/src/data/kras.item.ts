@@ -78,12 +78,40 @@ async function postJson<T>(path: string, body: unknown): Promise<T> {
 
 /** applyItem：单 Item 请求，单事务 */
 export async function applyItem<T = KrasItem>(item: KrasItem): Promise<T> {
-  return postJson<T>('/applyItem', item)
+  const result = await postJson<T>('/applyItem', item)
+  // 元数据级修改自动失效缓存（REQ-077）：add/update/delete 涉及元数据类型时清缓存
+  invalidateMetadataCacheOnMutation(item)
+  return result
 }
 
 /** applyAml：批量请求，共享一个批量事务 */
 export async function applyAml<T = KrasItem[]>(items: KrasItem[]): Promise<T> {
-  return postJson<T>('/applyAml', { AML: items })
+  const result = await postJson<T>('/applyAml', { AML: items })
+  items.forEach((it) => invalidateMetadataCacheOnMutation(it))
+  return result
+}
+
+const METADATA_TYPES = new Set([
+  'ItemType', 'Property', 'RelationshipType', 'List', 'ListValue', 'View', 'Form', 'Permission',
+])
+const MUTATION_ACTIONS = new Set(['add', 'update', 'edit', 'delete', 'copy'])
+
+/** 命中元数据写入则清掉对应缓存条目（只清，不主动重拉，避免循环加载） */
+function invalidateMetadataCacheOnMutation(item: KrasItem): void {
+  const type = item['@type'] as string | undefined
+  const action = item['@action'] as string | undefined
+  if (!type || !action) return
+  if (!METADATA_TYPES.has(type) || !MUTATION_ACTIONS.has(action)) return
+  // 动态导入避免循环依赖
+  import('./kras.cache')
+    .then(({ krasCache }) => {
+      krasCache.clearItemType()
+      // 派发事件让已挂载页面知道元数据变了
+      window.dispatchEvent(new CustomEvent('kras:metadata-invalidated'))
+    })
+    .catch(() => {
+      // 静默
+    })
 }
 
 /** whereUsed：反向引用 */

@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Kras.Core.Items;
+using Kras.Service.Access;
+using Kras.Service.Audit;
 using Kras.Service.Items;
 using Kras.Service.Protocol;
 using Kras.Service.Protocol.Aml;
@@ -17,7 +19,14 @@ namespace Kras.Api.Controllers;
 public class ApplyController : ControllerBase
 {
     private readonly IItemActionHandler _handler;
-    public ApplyController(IItemActionHandler handler) => _handler = handler;
+    private readonly IAccessService _access;
+    private readonly IAuditLogService _audit;
+    public ApplyController(IItemActionHandler handler, IAccessService access, IAuditLogService audit)
+    {
+        _handler = handler;
+        _access = access;
+        _audit = audit;
+    }
 
     /// <summary>
     /// 单 Item 请求（统一事务）。
@@ -58,7 +67,11 @@ public class ApplyController : ControllerBase
 
         try
         {
-            var result = _handler.Dispatch(request.Item);
+            var result = _handler.Dispatch(request.Item, _access);
+            // 审计：记录写入类 action
+            var a = request.Item.Action;
+            if (a is "add" or "update" or "edit" or "delete" or "version" or "promote" or "lock" or "unlock")
+                _audit.Log(a, request.Item);
             return Ok(UnwrapResult(result));
         }
         catch (KrasException ex)
@@ -106,8 +119,11 @@ public class ApplyController : ControllerBase
             var results = new List<object?>();
             foreach (var item in aml.Aml)
             {
-                var r = _handler.Dispatch(item);
+                var r = _handler.Dispatch(item, _access);
                 results.Add(UnwrapData(r));
+                var a = item.Action;
+                if (a is "add" or "update" or "edit" or "delete" or "version" or "promote")
+                    _audit.Log($"aml:{a}", item);
             }
             return Ok(new { success = true, data = results });
         }
@@ -126,8 +142,23 @@ public class ApplyController : ControllerBase
     /// <response code="200">返回引用方列表</response>
     [HttpPost("whereUsed")]
     [ProducesResponseType(typeof(KrasEnvelope<List<Item>>), 200)]
-    public IActionResult WhereUsed([FromBody] Item request) =>
-        Ok(new { success = true, data = Array.Empty<object>() });
+    public IActionResult WhereUsed([FromBody] Item request)
+    {
+        try
+        {
+            var result = _handler.Dispatch(new Item
+            {
+                ["@type"] = request.Type ?? "",
+                ["@id"] = request.Id,
+                ["@action"] = "whereUsed",
+            }, _access);
+            return Ok(UnwrapResult(result));
+        }
+        catch (KrasException ex)
+        {
+            return BadRequest(ApiResponseFactory.Error(ex.CodeString, ex.Message));
+        }
+    }
 
     // 把内部 __items__ 包装的对象展开为前端期望的 data 形态
     private static object UnwrapResult(Item result)

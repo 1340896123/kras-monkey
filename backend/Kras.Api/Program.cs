@@ -1,6 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
 using Kras.Core.Items;
+using Kras.Service.Access;
 using Kras.Service.Host;
 using Kras.Service.Protocol.Response;
 
@@ -13,6 +14,7 @@ builder.Services.AddControllers()
         opts.JsonSerializerOptions.Encoder = System.Text.Encodings.Web.JavaScriptEncoder.UnsafeRelaxedJsonEscaping;
     });
 
+builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 
 // === Swagger / OpenAPI ===
@@ -91,6 +93,7 @@ app.UseSwaggerUI(options =>
 });
 
 app.UseCors();
+app.UseKrasAccessContext();
 app.UseKrasSeedInitialization();
 
 // 把根路径直接重定向到 swagger，方便打开

@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
+using Kras.Service.Access;
+using Kras.Service.Audit;
 using Kras.Service.Auth;
 using Kras.Service.Items;
 using Kras.Service.Seed;
@@ -12,6 +14,9 @@ public static class ServiceCollectionExtensions
     public static IServiceCollection AddKrasCoreServices(this IServiceCollection services)
     {
         services.AddSingleton<TokenService>();
+        services.AddKrasAccessContext();
+        services.AddScoped<IAuditLogService, AuditLogService>();
+        services.AddScoped<IAccessService, AccessService>();
         services.AddSingleton<IItemRepository, InMemoryItemRepository>();
         services.AddSingleton<IItemActionHandler, ItemActionHandler>();
 

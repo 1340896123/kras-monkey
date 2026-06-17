@@ -3,7 +3,7 @@
 // 对应需求 §9.3 / §16.1
 import { ref, computed, onMounted, watch, h, onActivated } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { Button, Input, InputNumber, DatePicker, Select, Switch, Space, Tag, Tooltip } from 'ant-design-vue'
+import { Button, Input, InputNumber, DatePicker, Select, Switch, Space, Tag, Tooltip, Popconfirm, message } from 'ant-design-vue'
 import { PlusOutlined, ReloadOutlined, EditOutlined, DeleteOutlined, SearchOutlined } from '@ant-design/icons-vue'
 import dayjs from 'dayjs'
 import { applyItem } from '@/data/kras.item'
@@ -127,6 +127,17 @@ function onCreate() {
   const path = `/item-types/${itemTypeName.value}/new`
   tabs.openTab({ key: path, title: `新建 ${itemTypeMeta.value?.label ?? itemTypeName.value}`, path, closable: true })
   router.push(path)
+}
+
+async function onDelete(row: KrasItem) {
+  const id = row['@id'] as string
+  try {
+    await applyItem({ '@type': itemTypeName.value, '@id': id, '@action': 'delete' })
+    message.success('已删除')
+    await fetchData()
+  } catch (e: unknown) {
+    message.error((e as Error).message ?? '删除失败')
+  }
 }
 
 // 渲染单元格值
@@ -302,6 +313,16 @@ onMounted(fetchData)
                     <Tooltip title="查看">
                       <Button size="small" type="text" @click="openDetail(row)"><EditOutlined /></Button>
                     </Tooltip>
+                    <Popconfirm
+                      :title="`删除 ${row['@keyed_name'] ?? ''}?`"
+                      ok-text="删除"
+                      cancel-text="取消"
+                      @confirm="onDelete(row)"
+                    >
+                      <Tooltip title="删除">
+                        <Button size="small" type="text" danger><DeleteOutlined /></Button>
+                      </Tooltip>
+                    </Popconfirm>
                   </Space>
                 </td>
               </template>
